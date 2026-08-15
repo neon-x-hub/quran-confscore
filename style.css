@@ -625,6 +625,7 @@ body {
 
 input[type=range] {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 5px;
     border-radius: 4px;
@@ -795,12 +796,27 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
    Footer
 ---------------------------------------------------------------- */
 .app-footer {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     color: var(--clr-text-dim);
     font-size: 0.78rem;
     margin-top: 48px;
     padding-top: 20px;
     border-top: 1px solid var(--clr-border);
+}
+
+.footer-github-link {
+    color: var(--clr-text-dim) !important;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    transition: color 0.2s ease;
+}
+
+.footer-github-link:hover {
+    color: var(--clr-text-main);
 }
 
 /* ----------------------------------------------------------------
