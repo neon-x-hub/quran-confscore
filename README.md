@@ -260,4 +260,22 @@ Open `http://localhost:8000`. The server sets CORS headers and disables caching 
 
 ## License
 
-This project is released under the MIT License. Quranic text is sourced from a verified standard Arabic corpus distribution.
+This project uses two separate licenses depending on the component.
+
+**Source code** (scoring engine, web frontend, scripts) is released under the
+MIT License. See [LICENSE](LICENSE).
+
+**Quran text data** (`data/quran.json` and all derived artifacts in `dist/`)
+is based on the [quran-json](https://github.com/risan/quran-json) dataset
+by [Risan Bagja Pradana](https://github.com/risan), licensed under the
+[Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
+license. See [LICENSE-DATA](LICENSE-DATA).
+
+### Attribution
+
+The Quran text corpus used in this project is sourced from:
+
+> Risan Bagja Pradana. *quran-json: Quran text and translations in JSON format.*
+> https://github.com/risan/quran-json
+> Licensed under CC BY-SA 4.0.
+
