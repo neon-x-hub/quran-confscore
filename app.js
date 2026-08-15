@@ -173,8 +173,12 @@ function filterAndRender() {
     const tier     = tierSelect.value;
     const sort     = sortSelect.value;
 
-    // 1. Sort display pool by final_score ('f') descending for tier slicing
-    const byScore = [...displayData].sort((a, b) => b.f - a.f);
+    // 1. When searching, use full allData so repeated ayahs across surahs are all shown.
+    //    When browsing (no query), use deduplicated displayData.
+    const sourcePool = rawQuery ? allData : displayData;
+
+    // Sort pool by final_score ('f') descending for tier slicing
+    const byScore = [...sourcePool].sort((a, b) => b.f - a.f);
     const N = byScore.length;
     const chunk = Math.floor(N / 5);
 
