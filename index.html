@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محرّك تحليل المتشابهات القرآنية</title>
+    <meta name="description" content="أداة لتحليل درجات التشابه بين الآيات القرآنية ومساعدة الحفّاظ في المراجعة">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+
+        <!-- ====================================================
+             HEADER
+        ===================================================== -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="logo-mark">☽</div>
+                <div class="brand-text">
+                    <h1>محرّك المتشابهات القرآنية</h1>
+                    <p>أداة لتحليل درجات التشابه بين الآيات ومساعدة الحفّاظ في المراجعة</p>
+                </div>
+            </div>
+            <nav class="tab-nav" role="tablist">
+                <button class="tab-btn active" data-tab="explorer" role="tab">استعراض الآيات</button>
+                <button class="tab-btn" data-tab="simulator"  role="tab">محاكاة المراجعة</button>
+                <button class="tab-btn" data-tab="leaderboard" role="tab">ترتيب السور</button>
+            </nav>
+        </header>
+
+        <!-- ====================================================
+             TAB 1 — EXPLORER
+        ===================================================== -->
+        <main id="tab-explorer" class="tab-pane active" role="tabpanel">
+
+            <!-- Search & Filters -->
+            <section class="filter-bar">
+                <div class="search-wrap">
+                    <span class="search-icon-inner">🔍</span>
+                    <input
+                        id="search-input"
+                        type="search"
+                        autocomplete="off"
+                        dir="rtl"
+                        placeholder="ابحث بنص الآية، أو اسم السورة، أو رقم الآية (مثال: ٢:٢٥٥)"
+                    >
+                    <button id="clear-search" class="clear-btn" title="مسح البحث">✕</button>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="tier-select">مستوى التشابه</label>
+                        <select id="tier-select">
+                            <option value="all">جميع الآيات</option>
+                            <option value="tier1">شديد التشابه — أعلى ٢٠٪</option>
+                            <option value="tier2">عالي التشابه — ٢٠٪ إلى ٤٠٪</option>
+                            <option value="tier3">متوسط — ٤٠٪ إلى ٦٠٪</option>
+                            <option value="tier4">منخفض — ٦٠٪ إلى ٨٠٪</option>
+                            <option value="tier5">نادر التشابه — أدنى ٢٠٪</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="sort-select">الترتيب حسب</label>
+                        <select id="sort-select">
+                            <option value="score_desc">درجة الصعوبة (الأعلى)</option>
+                            <option value="score_asc">درجة الصعوبة (الأدنى)</option>
+                            <option value="max_comp_desc">أقوى منافس</option>
+                            <option value="words_asc">أقصر الآيات</option>
+                            <option value="words_desc">أطول الآيات</option>
+                            <option value="order">ترتيب المصحف</option>
+                        </select>
+                    </div>
+
+                    <div class="results-chip">
+                        <span id="displayed-count">٠</span> / <span id="total-count">...</span> آية
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cards -->
+            <section id="cards-grid" class="cards-grid">
+                <div class="loading-state">جاري تحميل بيانات التحليل...</div>
+            </section>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button id="prev-page" class="pager-btn" disabled>→ السابق</button>
+                <span id="page-indicator" class="page-indicator">الصفحة ١ من ١</span>
+                <button id="next-page"  class="pager-btn" disabled>التالي ←</button>
+            </div>
+        </main>
+
+        <!-- ====================================================
+             TAB 2 — SIMULATOR
+        ===================================================== -->
+        <main id="tab-simulator" class="tab-pane" role="tabpanel">
+            <section class="sim-panel">
+                <div class="sim-header">
+                    <h2>محاكاة اختيار آية للمراجعة</h2>
+                    <p>
+                        يتم تحويل درجات الصعوبة إلى احتمالات اختيار باستخدام توزيع طيف الحرارة.
+                        كلّما انخفضت درجة الحرارة، زاد التركيز على الآيات الأشد التباساً.
+                    </p>
+                </div>
+
+                <div class="temp-block">
+                    <div class="temp-top-row">
+                        <label for="temp-slider">درجة الحرارة</label>
+                        <span class="temp-display">
+                            <strong id="temp-val">١٫٠</strong>
+                        </span>
+                    </div>
+                    <input type="range" id="temp-slider" min="0.1" max="5.0" step="0.1" value="1.0">
+                    <div class="temp-scale">
+                        <span>تركيز كامل</span>
+                        <span id="temp-hint" class="temp-hint-text">توزيع متوازن</span>
+                        <span>عشوائي</span>
+                    </div>
+                </div>
+
+                <div class="sim-action-row">
+                    <button id="draw-prompt-btn" class="draw-btn">
+                        <span class="draw-icon">◈</span> اسحب آية للمراجعة
+                    </button>
+                </div>
+
+                <!-- Sampled Result -->
+                <div id="sampled-card-container" class="sampled-wrap hidden">
+                    <div class="sampled-label">الآية المختارة</div>
+                    <div id="sampled-card-content"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ====================================================
+             TAB 3 — LEADERBOARD
+        ===================================================== -->
+        <main id="tab-leaderboard" class="tab-pane" role="tabpanel">
+            <section class="lb-panel">
+                <div class="lb-header">
+                    <h2>ترتيب السور حسب متوسط درجات التشابه</h2>
+                    <p>كلّما ارتفعت الدرجة، زادت نسبة الالتباس بين آيات السورة وسائر الآيات.</p>
+                </div>
+                <div class="table-scroll">
+                    <table class="lb-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>السورة</th>
+                                <th>عدد الآيات</th>
+                                <th>مجموع الكلمات</th>
+                                <th>متوسط الدرجة</th>
+                                <th>أشد آية تشابهاً</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            نظام تحليل المتشابهات القرآنية — الإصدار الأول • خوارزمية نصية بدون تعلم آلي
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

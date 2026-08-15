@@ -1,0 +1,22 @@
+# Python byte-code / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+venv/
+ENV/
+
+# System / OS files
+.DS_Store
+Thumbs.db
+
+# Large raw logs / temporary scratch files
+*.log
+scratch/
+
+
+# Draft / temporary files
+.draft/
