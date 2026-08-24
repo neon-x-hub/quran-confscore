@@ -10,7 +10,7 @@ The system requires no machine learning, no external dependencies, and no person
 
 The interactive web visualizer is deployed on GitHub Pages:
 
-**[quran-confscore — Live Explorer](https://neon-x-hub.github.io/quran-confscore/)**
+**[quran-confscore — Live Explorer](https://quran.mmmo.dev/)**
 
 Three tabs are available in the interface:
 
