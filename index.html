@@ -33,6 +33,7 @@
                 <button class="tab-btn" data-tab="simulator" role="tab">محاكاة المراجعة</button>
                 <button class="tab-btn" data-tab="leaderboard" role="tab">ترتيب السور</button>
             </nav>
+            <button id="theme-toggle" class="theme-toggle-btn" title="تبديل المظهر" aria-label="تبديل المظهر">🌙</button>
         </header>
 
         <!-- ====================================================
@@ -104,6 +105,23 @@
                         يتم تحويل درجات الصعوبة إلى احتمالات اختيار باستخدام توزيع طيف الحرارة.
                         كلّما انخفضت درجة الحرارة، زاد التركيز على الآيات الأشد التباساً.
                     </p>
+                </div>
+
+                <div class="range-block">
+                    <div class="range-block-title">نطاق السور</div>
+                    <div class="range-selects">
+                        <div class="range-group">
+                            <label for="surah-from">من سورة</label>
+                            <select id="surah-from"></select>
+                        </div>
+                        <span class="range-arrow">←</span>
+                        <div class="range-group">
+                            <label for="surah-to">إلى سورة</label>
+                            <select id="surah-to"></select>
+                        </div>
+                    </div>
+                    <div id="range-info" class="range-info-chip">جاري التحميل…</div>
+                    <div id="range-error" class="range-error hidden">⚠ يجب أن تكون السورة الأولى قبل أو مساوية للسورة الأخيرة.</div>
                 </div>
 
                 <div class="temp-block">

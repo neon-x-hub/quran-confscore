@@ -1,6 +1,17 @@
 // ================================================================
-// Quran Ayah Confusability — Web Client (v0.2 - Network Optimized)
+// Quran Ayah Confusability — Web Client (v0.3 - Feature Update)
 // ================================================================
+
+// ----------------------------------------------------------------
+// Utilities
+// ----------------------------------------------------------------
+function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
 
 const SURAH_NAMES = {
     1: "الفاتحة", 2: "البقرة", 3: "آل عمران", 4: "النساء", 5: "المائدة",
@@ -58,12 +69,19 @@ const drawPromptBtn   = document.getElementById('draw-prompt-btn');
 const sampledContainer= document.getElementById('sampled-card-container');
 const sampledContent  = document.getElementById('sampled-card-content');
 const leaderboardBody = document.getElementById('leaderboard-body');
+const themeToggleBtn  = document.getElementById('theme-toggle');
+const surahFromSelect = document.getElementById('surah-from');
+const surahToSelect   = document.getElementById('surah-to');
+const rangeInfoChip   = document.getElementById('range-info');
+const rangeErrorEl    = document.getElementById('range-error');
 
 // ----------------------------------------------------------------
 // Bootstrap
 // ----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+    setupTheme();
     setupTabs();
+    populateSurahSelects();
     loadData();
 });
 
@@ -79,6 +97,25 @@ function setupTabs() {
             document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
         });
     });
+}
+
+// ----------------------------------------------------------------
+// Theme (Dark / Light)
+// ----------------------------------------------------------------
+function setupTheme() {
+    const saved = localStorage.getItem('quran-theme') || 'dark';
+    applyTheme(saved);
+
+    themeToggleBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    themeToggleBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+    localStorage.setItem('quran-theme', theme);
 }
 
 // ----------------------------------------------------------------
@@ -110,6 +147,7 @@ async function loadData() {
         setupEventListeners();
         filterAndRender();
         renderLeaderboard();
+        updateRangeInfo(); // refresh count now that displayData is populated
 
     } catch (err) {
         console.error(err);
@@ -121,7 +159,7 @@ async function loadData() {
 // Event Listeners
 // ----------------------------------------------------------------
 function setupEventListeners() {
-    searchInput.addEventListener('input', () => { currentPage = 1; filterAndRender(); });
+    searchInput.addEventListener('input', debounce(() => { currentPage = 1; filterAndRender(); }, 300));
     clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; currentPage = 1; filterAndRender(); });
     tierSelect.addEventListener('change', () => { currentPage = 1; filterAndRender(); });
     sortSelect.addEventListener('change', () => { currentPage = 1; filterAndRender(); });
@@ -141,6 +179,10 @@ function setupEventListeners() {
         else if (v <= 2.0) tempHintEl.textContent = 'توزيع متوازن';
         else               tempHintEl.textContent = 'اختيار شبه عشوائي';
     });
+
+    // Surah range
+    surahFromSelect.addEventListener('change', updateRangeInfo);
+    surahToSelect.addEventListener('change', updateRangeInfo);
 
     drawPromptBtn.addEventListener('click', drawSimulatorPrompt);
 }
@@ -396,13 +438,48 @@ function getTierClass(score) {
 }
 
 // ----------------------------------------------------------------
+// Surah Range (Simulator)
+// ----------------------------------------------------------------
+function populateSurahSelects() {
+    const options = Object.entries(SURAH_NAMES)
+        .map(([id, name]) => `<option value="${id}">${id}. ${name}</option>`)
+        .join('');
+    surahFromSelect.innerHTML = options;
+    surahToSelect.innerHTML   = options;
+    surahToSelect.value = '114';      // default: full Quran
+    updateRangeInfo();
+}
+
+function updateRangeInfo() {
+    const from = parseInt(surahFromSelect.value);
+    const to   = parseInt(surahToSelect.value);
+    const valid = from <= to;
+
+    rangeErrorEl.classList.toggle('hidden', valid);
+    drawPromptBtn.disabled = !valid;
+
+    if (valid) {
+        const count = displayData.filter(a => a.s >= from && a.s <= to).length;
+        rangeInfoChip.textContent = `عدد الآيات في النطاق: ${count.toLocaleString('ar-EG')}`;
+    } else {
+        rangeInfoChip.textContent = '';
+    }
+}
+
+// ----------------------------------------------------------------
 // Simulator
 // ----------------------------------------------------------------
 function drawSimulatorPrompt() {
     if (displayData.length === 0) return;
 
+    const from = parseInt(surahFromSelect.value);
+    const to   = parseInt(surahToSelect.value);
+    const pool = displayData.filter(a => a.s >= from && a.s <= to);
+
+    if (pool.length === 0) return;
+
     const T = parseFloat(tempSlider.value);
-    const rawScores = displayData.map(a => a.f);
+    const rawScores = pool.map(a => a.f);
     const minScore  = Math.min(...rawScores);
     const maxScore  = Math.max(...rawScores);
     const range     = maxScore - minScore || 1;
@@ -419,7 +496,7 @@ function drawSimulatorPrompt() {
         if (rand <= 0) { selectedIdx = i; break; }
     }
 
-    const item = displayData[selectedIdx];
+    const item = pool[selectedIdx];
 
     sampledContainer.classList.remove('hidden');
     sampledContent.innerHTML = '';

@@ -45,6 +45,30 @@
     --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
 }
 
+/* Light theme overrides */
+[data-theme="light"] {
+    --clr-bg:           hsl(220, 20%, 97%);
+    --clr-surface:      hsl(220, 18%, 92%);
+    --clr-surface-2:    hsl(220, 16%, 86%);
+    --clr-border:       hsl(220, 14%, 76%);
+    --clr-border-light: hsl(220, 14%, 62%);
+
+    --clr-text:         hsl(220, 20%, 12%);
+    --clr-text-muted:   hsl(220, 10%, 40%);
+    --clr-text-dim:     hsl(220, 8%, 56%);
+
+    --clr-gold-dim:     hsla(43, 74%, 50%, 0.12);
+    --clr-gold-border:  hsla(43, 74%, 50%, 0.3);
+    --clr-emerald-dim:  hsla(142, 60%, 35%, 0.1);
+    --clr-blue-dim:     hsla(212, 92%, 50%, 0.1);
+    --clr-red-dim:      hsla(4, 86%, 50%, 0.1);
+    --clr-orange-dim:   hsla(28, 90%, 50%, 0.1);
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+}
+
 /* ----------------------------------------------------------------
    Reset & Base
 ---------------------------------------------------------------- */
@@ -356,7 +380,7 @@ body {
     font-family: var(--font-quran);
     font-size: 1.75rem;
     line-height: 2.1;
-    color: hsl(40, 60%, 96%);
+    color: var(--clr-text);
     text-align: right;
     padding: 14px 18px;
     background: var(--clr-surface-2);
@@ -820,6 +844,118 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
 }
 
 /* ----------------------------------------------------------------
+   Theme Toggle Button
+---------------------------------------------------------------- */
+.theme-toggle-btn {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    color: var(--clr-text-muted);
+    font-size: 1.15rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.18s, border-color 0.18s, transform 0.15s;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--clr-surface-2);
+    border-color: var(--clr-border-light);
+    transform: rotate(12deg) scale(1.08);
+}
+
+/* ----------------------------------------------------------------
+   Surah Range Selector (Simulator)
+---------------------------------------------------------------- */
+.range-block {
+    background: var(--clr-bg);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.range-block-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--clr-text-muted);
+}
+
+.range-selects {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.range-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.range-group label {
+    font-size: 0.83rem;
+    color: var(--clr-text-muted);
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.range-group select {
+    flex: 1;
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-sm);
+    color: var(--clr-text);
+    padding: 8px 10px;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.18s;
+}
+
+.range-group select:focus {
+    border-color: var(--clr-gold-border);
+    box-shadow: 0 0 0 3px var(--clr-gold-dim);
+}
+
+.range-arrow {
+    font-size: 1rem;
+    color: var(--clr-text-dim);
+    flex-shrink: 0;
+}
+
+.range-info-chip {
+    font-size: 0.82rem;
+    color: var(--clr-text-muted);
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    align-self: flex-start;
+}
+
+.range-error {
+    font-size: 0.82rem;
+    color: var(--clr-red);
+    background: var(--clr-red-dim);
+    border: 1px solid hsla(4, 86%, 60%, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+}
+
+.range-error.hidden { display: none; }
+
+/* ----------------------------------------------------------------
    Responsive
 ---------------------------------------------------------------- */
 @media (max-width: 720px) {
@@ -833,4 +969,6 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
     .quran-text { font-size: 1.45rem; }
     .sim-panel { padding: 20px; }
     .draw-btn { width: 100%; justify-content: center; }
+    .range-selects { flex-direction: column; }
+    .range-group { min-width: 0; width: 100%; }
 }
